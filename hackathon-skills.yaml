@@ -74,3 +74,77 @@ Disciplines:
   - Front-end
   - Back-end
   - Debugging
+
+Business/Product Solution:
+  - Product Management
+  - Market Research
+  - Customer Interviews
+  - Business Plan
+  - Pitch Deck
+  - Public Speaking
+  - Project Management
+  - Process Improvement
+  - Financial Modeling
+  - Marketing
+  - Technical Writing
+  - Entrepreneurship
+
+UI/UX Design:
+  - Figma
+  - Wireframing
+  - Prototyping
+  - Accessibility (WCAG)
+  - Design Systems
+  - Responsive Design
+  - CSS/Tailwind
+  - User Testing
+  - Typography
+  - Color Theory
+  - Animation
+  - Branding
+
+Games:
+  - Unity
+  - Unreal Engine
+  - Godot
+  - Game Design
+  - Level Design
+  - Pixel Art
+  - 3D Modeling
+  - Shaders
+  - Multiplayer/Netcode
+  - Game Audio
+  - VR/AR
+  - Lua
+
+AI Integration:
+  - Prompt Engineering
+  - Claude API
+  - OpenAI API
+  - RAG
+  - AI Agents
+  - MCP
+  - Machine Learning
+  - PyTorch
+  - Hugging Face
+  - Vector Databases
+  - Computer Vision
+  - NLP
+
+Technical Solution:
+  - Cybersecurity
+  - Penetration Testing
+  - Cryptography
+  - Linux
+  - Bash/Shell
+  - Git
+  - CI/CD
+  - Automation/Scripting
+  - Infrastructure as Code
+  - Microservices
+  - Serverless
+  - Monitoring/Observability
+  - Embedded/IoT
+  - Raspberry Pi/Arduino
+  - Robotics
+  - WebAssembly
