@@ -1,3 +1,8 @@
+options:
+  pages: 100
+  title: "Get To Know You BINGO!"
+  free-label: "add a skill here"
+
 Languages:
   - PHP
   - Ruby
@@ -69,4 +74,3 @@ Disciplines:
   - Front-end
   - Back-end
   - Debugging
-

@@ -465,7 +465,7 @@ def main(argv=None):
     except BingoError as e:
         print(f"bingo.py: error: {e}", file=sys.stderr)
         return 1
-    print(out)
+    print(f"Created {out}")
     return 0
 
 
