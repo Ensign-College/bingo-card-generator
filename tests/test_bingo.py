@@ -162,6 +162,31 @@ def test_free_square_does_not_count_toward_needed_labels(tmp_path):
     assert bingo.main(["--pages=1", "--no-free", str(p)]) == 1
 
 
+def test_footer_texts():
+    assert bingo.footer_texts(2, 10, 42) == ("Card 2 of 10", "Seed: 42")
+
+
+def test_resolve_seed_keeps_given_seed_and_invents_one_otherwise():
+    cfg = bingo.resolve_config({}, {})
+    assert bingo.resolve_seed({**cfg, "seed": 7})["seed"] == 7
+    invented = bingo.resolve_seed(cfg)["seed"]
+    assert isinstance(invented, int) and cfg["seed"] is None
+
+
+def test_footer_appears_on_every_page(tmp_path):
+    import shutil
+    import subprocess
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext not installed")
+    p = write_yaml(tmp_path, many_labels(30))
+    assert bingo.main(["--pages=3", "--seed=99", str(p)]) == 0
+    text = subprocess.run(["pdftotext", "-layout", str(tmp_path / "labels.pdf"), "-"],
+                          capture_output=True, text=True, check=True).stdout
+    for n in (1, 2, 3):
+        assert f"Card {n} of 3" in text
+    assert text.count("Seed: 99") == 3
+
+
 def test_max_size_card_renders(tmp_path):
     p = write_yaml(tmp_path, many_labels(300))
     assert bingo.main(["--size=16", "--pages=1", "--page-size=A4", str(p)]) == 0

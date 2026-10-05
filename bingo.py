@@ -12,6 +12,13 @@ from fpdf import FPDF
 FONT_DIR = Path(__file__).resolve().parent / "fonts"
 FONT_FAMILY = "DejaVu"
 
+# DejaVu has no light italic, so the footer uses ExtraLight slanted by the
+# same angle DejaVu's own Oblique faces use.
+FOOTER_FAMILY = "DejaVuLight"
+FOOTER_PT = 8
+FOOTER_SLANT_DEG = 11
+FOOTER_GREY = 77  # 70% grey: 70% ink coverage, i.e. 30% of full white
+
 # One distinct letter per column, so cards can be up to 16x16.
 HEADER_LETTERS = "BINGOLARDYPEZMUX"
 MIN_SIZE = 2
@@ -226,6 +233,7 @@ class CardRenderer:
         pdf.set_auto_page_break(False)
         pdf.add_font(FONT_FAMILY, "", str(FONT_DIR / "DejaVuSans.ttf"))
         pdf.add_font(FONT_FAMILY, "B", str(FONT_DIR / "DejaVuSans-Bold.ttf"))
+        pdf.add_font(FOOTER_FAMILY, "", str(FONT_DIR / "DejaVuSans-ExtraLight.ttf"))
         pdf.set_title(cfg["title"] or "BINGO")
         pdf.set_creator("bingo.py")
         self.pdf = pdf
@@ -311,7 +319,7 @@ class CardRenderer:
 
     # -- drawing ---------------------------------------------------------
 
-    def add_card(self, grid):
+    def add_card(self, grid, number, total):
         pdf = self.pdf
         pdf.add_page()
         pdf.set_draw_color(0)
@@ -336,6 +344,18 @@ class CardRenderer:
             for c, label in enumerate(row):
                 self._draw_square(self.left + c * self.cell,
                                   y + r * self.cell, label)
+        self._draw_footer(*footer_texts(number, total, self.cfg["seed"]))
+
+    def _draw_footer(self, left_text, right_text):
+        pdf = self.pdf
+        baseline = self.page_h - 10.0
+        pdf.set_font(FOOTER_FAMILY, "", FOOTER_PT)
+        pdf.set_text_color(FOOTER_GREY)
+        right_x = self.left + self.grid_w - pdf.get_string_width(right_text)
+        for x, text in ((self.left, left_text), (right_x, right_text)):
+            with pdf.skew(ax=FOOTER_SLANT_DEG, x=x, y=baseline):
+                pdf.text(x, baseline, text)
+        pdf.set_text_color(0)
 
     def _draw_header(self, y):
         pdf = self.pdf
@@ -397,7 +417,19 @@ def write_unique(labels_path, data):
     raise BingoError(f"could not find an unused output name for {stem}.pdf")
 
 
+def footer_texts(number, total, seed):
+    return f"Card {number} of {total}", f"Seed: {seed}"
+
+
+def resolve_seed(cfg):
+    """Return cfg with a concrete seed, so the footer can always show it."""
+    if cfg["seed"] is not None:
+        return cfg
+    return {**cfg, "seed": random.SystemRandom().getrandbits(32)}
+
+
 def generate(labels_path, cfg, labels):
+    cfg = resolve_seed(cfg)
     free = has_free_square(cfg)
     needed = cfg["size"] ** 2 - (1 if free else 0)
     if len(labels) < needed:
@@ -407,8 +439,8 @@ def generate(labels_path, cfg, labels):
         )
     rng = random.Random(cfg["seed"])
     renderer = CardRenderer(cfg)
-    for _ in range(cfg["pages"]):
-        renderer.add_card(make_card(labels, cfg, rng))
+    for n in range(1, cfg["pages"] + 1):
+        renderer.add_card(make_card(labels, cfg, rng), n, cfg["pages"])
     for text in sorted(renderer.warnings):
         print(f"bingo.py: warning: label does not fit its square: {text!r}",
               file=sys.stderr)

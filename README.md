@@ -28,7 +28,10 @@ bingo.py [--pages=10] [--size=5] [--free|--no-free] [--free-label=FREE] \
 | `--title` | `BINGO!` | Printed above the grid; `""` for none. |
 | `--page-size` | `8.5x11` | `8.5x11` or `A4`. |
 | `--header` / `--no-header` | header | Column letters above the grid: the first *size* letters of `BINGOLARDYPEZMUX`. |
-| `--seed` | random | Makes the cards reproducible. |
+| `--seed` | random | Makes the cards reproducible. When omitted, a random seed is chosen and printed in each page footer, so any run can be reproduced. |
+
+Each page has a footer in light, italic, 70% grey type: `Card N of M` on the
+left and `Seed: S` on the right.
 
 ## Labels file
 
@@ -57,8 +60,10 @@ never overwritten.
 
 ## Fonts
 
-DejaVu Sans (regular and bold) is bundled in `fonts/` so non-Latin characters
-such as `λ` render correctly. See `fonts/LICENSE-DejaVu`.
+DejaVu Sans (regular, bold and extra-light) is bundled in `fonts/` so
+non-Latin characters such as `λ` render correctly. DejaVu has no light italic,
+so the footer is the extra-light face slanted 11 degrees. See
+`fonts/LICENSE-DejaVu`.
 
 ## Tests
 
